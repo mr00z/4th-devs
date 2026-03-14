@@ -1,0 +1,14 @@
+{
+  "name": "task-01",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CSV processing and LLM tagging task",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ai-devs-examples": "file:../.."
+  }
+}
