@@ -1,0 +1,14 @@
+{
+    "name": "railway-route-activation",
+    "type": "module",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "node --watch app.js"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.12.1"
+    },
+    "devDependencies": {
+        "tsx": "^4.21.0"
+    }
+}

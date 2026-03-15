@@ -28,7 +28,7 @@ export const RESEND_API_KEY = process.env.RESEND_API_KEY;
 export const RESEND_FROM = process.env.RESEND_FROM;
 
 export const api = {
-  model: resolveModelForProvider("gpt-5.4"),
+  model: resolveModelForProvider("gpt-5-mini"),
   maxOutputTokens: 16384,
   instructions: `You are an assistant with access to file system tools and email sending.
 
