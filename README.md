@@ -197,3 +197,27 @@ Requires a running Neo4j 5.11+ instance (needed for vector index support):
 ```bash
 docker run -d --name neo4j -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=neo4j/password neo4j:5
 ```
+
+## Lesson 09
+
+| Example | Run | Description |
+|---------|-----|-------------|
+| `02_04_ops` | `npm run lesson9:ops` | Multi-agent daily ops generator with task delegation |
+
+Install dependencies:
+
+```bash
+npm run lesson9:install
+```
+
+## Lesson 20
+
+| Example | Run | Description |
+|---------|-----|-------------|
+| `05_01_agent_graph` | `npm run lesson20:agent_graph` | Multi-agent graph scheduler with task delegation, recovery, and a live dashboard |
+
+Install dependencies:
+
+```bash
+npm run lesson20:install
+```
