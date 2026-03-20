@@ -210,6 +210,19 @@ Install dependencies:
 npm run lesson9:install
 ```
 
+## Lesson 10
+
+| Example | Run | Description |
+|---------|-----|-------------|
+| `02_05_agent` | `npm run lesson10:agent` | Context engineering agent with observational memory (observer/reflector pattern) |
+| `02_05_sandbox` | `npm run lesson10:sandbox` | MCP sandbox agent with tool discovery and QuickJS code execution |
+
+Install dependencies:
+
+```bash
+npm run lesson10:install
+```
+
 ## Lesson 20
 
 | Example | Run | Description |
