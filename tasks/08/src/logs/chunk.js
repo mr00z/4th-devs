@@ -1,17 +1,34 @@
-export const chunkLogEntries = (entries, chunkCount) => {
-    const normalizedChunkCount = Math.max(1, Math.min(chunkCount, entries.length || 1));
-    const chunkSize = Math.ceil(entries.length / normalizedChunkCount);
+export const chunkByLines = (entries, size, overlap) => {
+    if (!Array.isArray(entries) || entries.length === 0) {
+        return [];
+    }
+
+    const chunkSize = Math.max(1, size);
+    const chunkOverlap = Math.max(0, Math.min(overlap, chunkSize - 1));
+    const step = Math.max(1, chunkSize - chunkOverlap);
     const chunks = [];
 
-    for (let index = 0; index < entries.length; index += chunkSize) {
-        const lines = entries.slice(index, index + chunkSize);
+    let start = 0;
+    while (start < entries.length) {
+        const endExclusive = Math.min(entries.length, start + chunkSize);
+        const lines = entries.slice(start, endExclusive);
+
         chunks.push({
             id: chunks.length + 1,
-            startLine: lines[0]?.id ?? 0,
-            endLine: lines.at(-1)?.id ?? 0,
-            lines
+            startIndex: start,
+            endIndex: endExclusive - 1,
+            startLineId: lines[0]?.id ?? 0,
+            endLineId: lines.at(-1)?.id ?? 0,
+            overlap: chunkOverlap,
+            lines,
         });
+
+        if (endExclusive >= entries.length) {
+            break;
+        }
+        start += step;
     }
 
     return chunks;
 };
+

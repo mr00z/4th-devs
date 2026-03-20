@@ -1,13 +1,30 @@
-# Failure Breakdown Agent
+# 08_02 Failure Logs Agent
 
-Agent for task `failure`.
+Standalone agent for the `failure` task.
 
-It fetches the power-plant failure log, splits it into deterministic chunks, runs parallel LLM sub-agents on each chunk, merges the suspected breakdown-related events, enforces the answer budget, and keeps retrying against the verify endpoint until a `{FLG:...}` response is returned or the retry limit is reached.
+## What it does
+
+1. Downloads failure logs from the hub endpoint.
+2. Saves raw logs to `workspace/failure.log`.
+3. Uses MCP file tools (`mcp/files-mcp`) to inspect saved logs.
+4. Parses and chunks logs by **lines** with overlap.
+5. Analyzes chunks to select breakdown-relevant events.
+6. Formats final output as one event per line.
+7. Compresses selection to stay within 1500 token budget.
+8. Sends verify requests in a retry loop until a flag appears or attempts are exhausted.
 
 ## Run
 
+From repository root:
+
 ```bash
-node tasks/08/app.js
+node tasks/08_02/app.js
+```
+
+or:
+
+```bash
+npm run --prefix tasks/08_02 start
 ```
 
 ## Required environment
@@ -16,23 +33,42 @@ node tasks/08/app.js
 
 ## Optional environment
 
-- `FAILURE_AGENT_MODEL=gpt-5.4-mini`
-- `FAILURE_AGENT_SUBAGENT_MODEL=gpt-5.4-mini`
-- `FAILURE_AGENT_MAX_ATTEMPTS=8`
-- `FAILURE_AGENT_CHUNK_COUNT=6`
-- `FAILURE_AGENT_MAX_TOKENS=1500`
-- `FAILURE_AGENT_DEBUG_ARTIFACTS=true`
-- `VERIFY_ENDPOINT=https://hub.ag3nts.org/verify`
+- `OPENAI_API_KEY` (for model-based chunk analysis)
+- `OPENROUTER_API_KEY` (alternative provider)
+- `AI_PROVIDER=openai|openrouter`
+- `VERIFY_ENDPOINT` (defaults to `https://hub.ag3nts.org/verify`)
+- `FAILURE_MAX_ATTEMPTS` (default `12`)
+- `FAILURE_CHUNK_SIZE` (default `120` lines)
+- `FAILURE_CHUNK_OVERLAP` (default `24` lines)
+- `FAILURE_MAX_EVENTS` (default `220`)
+- `FAILURE_MAIN_MODEL`
+- `FAILURE_COMPRESSION_MODEL`
 
-## Logging
+## Artifacts
 
-- Main logs are written to [`tasks/08/logs/agent.log`](tasks/08/logs/agent.log)
-- API logs are written to [`tasks/08/logs/api.log`](tasks/08/logs/api.log)
-- Debug artifacts can be written to [`tasks/08/logs/artifacts`](tasks/08/logs/artifacts)
+- Raw log: `workspace/failure.log`
+- Attempt artifacts: `workspace/artifacts/`
+- Runtime log file: `logs/failure-agent.log`
 
-## Architecture
+## Output constraints
 
-- [`tasks/08/src/agent.js`](tasks/08/src/agent.js) orchestrates retries and verification.
-- [`tasks/08/src/subagents/run-parallel.js`](tasks/08/src/subagents/run-parallel.js) runs one independent LLM call per chunk via `Promise.all`.
-- [`tasks/08/src/merge.js`](tasks/08/src/merge.js) deduplicates and ranks candidate events.
-- [`tasks/08/src/token-budget.js`](tasks/08/src/token-budget.js) keeps the final payload under the hard answer limit.
+The agent preserves the required answer shape:
+
+```json
+{
+  "apikey": "<HUB_API_KEY>",
+  "task": "failure",
+  "answer": {
+    "logs": "..."
+  }
+}
+```
+
+And enforces:
+
+- one event per output line
+- date format `YYYY-MM-DD`
+- time format `HH:MM` (or equivalent normalized)
+- preserved timestamp + severity + component id
+- hard cap of 1500 estimated tokens
+

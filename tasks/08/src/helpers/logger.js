@@ -1,130 +1,123 @@
-import { appendFile, mkdir, rename, stat, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { failureConfig } from "../config.js";
+import { appendFile, mkdir, writeFile } from 'node:fs/promises';
+import { failureConfig } from '../config.js';
 
 const colors = {
-    reset: "\x1b[0m",
-    dim: "\x1b[2m",
-    green: "\x1b[32m",
-    yellow: "\x1b[33m",
-    red: "\x1b[31m",
-    cyan: "\x1b[36m",
-    magenta: "\x1b[35m",
-    white: "\x1b[37m",
-    blue: "\x1b[34m"
+    reset: '\x1b[0m',
+    dim: '\x1b[2m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
 };
 
-const LOG_FILE = path.join(failureConfig.logsDir, "agent.log");
-const API_LOG_FILE = path.join(failureConfig.logsDir, "api.log");
-const MAX_LOG_SIZE = 10 * 1024 * 1024;
+let queue = Promise.resolve();
 
-const timestamp = () => new Date().toLocaleTimeString("en-US", { hour12: false });
+const timestamp = () => new Date().toISOString();
 
-const ensureDir = async () => {
-    await mkdir(failureConfig.logsDir, { recursive: true });
-    if (failureConfig.debugArtifacts) {
-        await mkdir(failureConfig.artifactsDir, { recursive: true });
+const stringify = (value) => {
+    if (typeof value === 'string') {
+        return value;
     }
-};
 
-const rotateIfNeeded = async (filePath) => {
     try {
-        const fileStat = await stat(filePath);
-        if (fileStat.size > MAX_LOG_SIZE) {
-            const suffix = new Date().toISOString().replace(/[:.]/g, "-");
-            await rename(filePath, `${filePath}.${suffix}`);
-        }
+        return JSON.stringify(value, null, 2);
     } catch {
-        // ignore missing file
+        return String(value);
     }
 };
 
-const writeLine = async (filePath, level, message) => {
-    await ensureDir();
-    await rotateIfNeeded(filePath);
-    await appendFile(filePath, `[${new Date().toISOString()}] [${level}] ${message}\n`, "utf8");
+const preview = (value, maxChars = failureConfig.logPreviewChars) => {
+    const rendered = stringify(value);
+    if (rendered.length <= maxChars) {
+        return rendered;
+    }
+
+    return `${rendered.slice(0, maxChars)}…`;
 };
 
-const emit = (icon, color, message) => {
-    console.log(`${colors.dim}[${timestamp()}]${colors.reset} ${color}${icon}${colors.reset} ${message}`);
+const persist = (level, label, value) => {
+    const line = `[${timestamp()}] [${level}] ${label} ${stringify(value)}\n`;
+    queue = queue
+        .then(async () => {
+            await mkdir(failureConfig.logsDir, { recursive: true });
+            await appendFile(failureConfig.logFilePath, line, 'utf8');
+        })
+        .catch(() => { });
+
+    return queue;
 };
 
-const toLine = (value) => typeof value === "string" ? value : JSON.stringify(value);
+const print = (label, value, color) => {
+    console.log(`${color}${label}${colors.reset} ${value}`);
+};
 
-const log = {
+const write = (level, label, value, color) => {
+    const rendered = stringify(value);
+    print(label, rendered, color);
+    void persist(level, label, rendered);
+};
+
+const box = (text) => {
+    const lines = text.split('\n');
+    const width = Math.max(...lines.map((line) => line.length), 0);
+    const border = '═'.repeat(width + 2);
+    const rendered = [
+        `╔${border}╗`,
+        ...lines.map((line) => `║ ${line.padEnd(width, ' ')} ║`),
+        `╚${border}╝`,
+    ].join('\n');
+
+    console.log(`${colors.blue}${rendered}${colors.reset}`);
+    void persist('box', '[box]', rendered);
+};
+
+export const writeArtifact = async (name, value) => {
+    await mkdir(failureConfig.artifactsDir, { recursive: true });
+    const payload = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+    await writeFile(`${failureConfig.artifactsDir}/${name}`, payload, 'utf8');
+    if (failureConfig.logVerbose) {
+        write('artifact', '[artifact]', `${name} (${payload.length} chars)`, colors.dim);
+    }
+};
+
+export default {
     async reset() {
-        await ensureDir();
-        await writeFile(LOG_FILE, "", "utf8");
-        await writeFile(API_LOG_FILE, "", "utf8");
+        queue = Promise.resolve();
+        await mkdir(failureConfig.logsDir, { recursive: true });
+        await mkdir(failureConfig.artifactsDir, { recursive: true });
+        await writeFile(failureConfig.logFilePath, '', 'utf8');
     },
-
-    flush() {
-        return Promise.resolve();
-    },
-
-    box(text) {
-        const width = Math.max(...text.split("\n").map((line) => line.length)) + 4;
-        console.log(`\n${colors.cyan}${"─".repeat(width)}${colors.reset}`);
-        for (const line of text.split("\n")) {
-            console.log(`${colors.cyan}│${colors.reset} ${line.padEnd(width - 3)}${colors.cyan}│${colors.reset}`);
-        }
-        console.log(`${colors.cyan}${"─".repeat(width)}${colors.reset}\n`);
-    },
-
+    box,
     info(message) {
-        emit("i", colors.blue, message);
-        return writeLine(LOG_FILE, "INFO", message);
+        write('info', '[info]', message, colors.cyan);
     },
-
     start(message) {
-        emit("→", colors.cyan, message);
-        return writeLine(LOG_FILE, "START", message);
+        write('start', '[run]', message, colors.yellow);
     },
-
     success(message) {
-        emit("✓", colors.green, message);
-        return writeLine(LOG_FILE, "SUCCESS", message);
+        write('success', '[ok]', message, colors.green);
     },
-
     warn(message) {
-        emit("⚠", colors.yellow, message);
-        return writeLine(LOG_FILE, "WARN", message);
+        write('warn', '[warn]', message, colors.magenta);
     },
-
-    error(title, message = "") {
-        const full = message ? `${title}: ${message}` : title;
-        emit("✗", colors.red, full);
-        return writeLine(LOG_FILE, "ERROR", full);
+    data(label, value) {
+        write('data', `[data] ${label}`, value, colors.dim);
     },
+    trace(label, value) {
+        if (!failureConfig.logVerbose) {
+            return;
+        }
 
-    debug(scope, value) {
-        const line = `[${scope}] ${toLine(value)}`;
-        emit("·", colors.white, line);
-        return writeLine(LOG_FILE, "DEBUG", line);
+        const rendered = preview(value);
+        write('trace', `[trace] ${label}`, rendered, colors.blue);
     },
-
-    data(scope, value) {
-        const line = `[${scope}] ${toLine(value)}`;
-        emit("◆", colors.magenta, line);
-        return writeLine(LOG_FILE, "DATA", line);
+    error(message, details = '') {
+        write('error', '[err]', `${message}${details ? `: ${details}` : ''}`, colors.red);
     },
-
-    api(scope, value) {
-        const line = `[${scope}] ${toLine(value)}`;
-        emit("◌", colors.cyan, line);
-        return writeLine(API_LOG_FILE, "API", line);
-    }
+    flush() {
+        return queue;
+    },
 };
 
-export const writeArtifact = async (name, payload) => {
-    if (!failureConfig.debugArtifacts) {
-        return;
-    }
-
-    await ensureDir();
-    const artifactPath = path.join(failureConfig.artifactsDir, name);
-    const serialized = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
-    await writeFile(artifactPath, serialized, "utf8");
-};
-
-export default log;
