@@ -1,13 +1,12 @@
-import { run } from "./src/agent.js";
-import log from "./src/helpers/logger.js";
+import { run } from './src/agent.js';
+import log from './src/helpers/logger.js';
 
 const main = async () => {
     await log.reset();
-    log.box("Failure Breakdown Agent\nAnalyze plant failure logs");
+    log.box('Failure Logs Agent\nFind breakdown-relevant events');
 
     const result = await run();
-    log.success("Agent finished");
-    log.data("final-result", result);
+    log.success('Agent finished');
 
     if (result.flag) {
         console.log(result.flag);
@@ -18,6 +17,7 @@ const main = async () => {
 };
 
 main().catch((error) => {
-    log.error("Fatal error", error.message);
+    log.error('Fatal error', error instanceof Error ? error.message : String(error));
     log.flush().finally(() => process.exit(1));
 });
+
