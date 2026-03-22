@@ -1,0 +1,16 @@
+{
+  "name": "tasks-10-drone-agent",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "openai": "^6.17.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3",
+    "@types/node": "^20.11.17"
+  }
+}
