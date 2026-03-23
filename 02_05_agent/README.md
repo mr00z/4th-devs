@@ -33,3 +33,4 @@ npm run lesson10:agent:demo
 ## Notes
 
 The server runs on `http://localhost:3001` by default (override with `PORT` env var). Use `GET /api/sessions` to list sessions and `POST /api/sessions/:id/flush` to force-compress remaining messages.
+

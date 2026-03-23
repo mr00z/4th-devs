@@ -24,3 +24,5 @@ npm run lesson10:sandbox
 ## Notes
 
 Pass a custom task as CLI arguments: `bun src/index.ts "your task here"`. The default demo creates a shopping list, marks an item complete, and shows remaining items.
+
+...
