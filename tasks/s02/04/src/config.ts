@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 // @ts-expect-error — root config is untyped JS
-import { AI_API_KEY, CHAT_API_BASE_URL, EXTRA_API_HEADERS, resolveModelForProvider } from '../../../config.js'
+import { AI_API_KEY, CHAT_API_BASE_URL, EXTRA_API_HEADERS, resolveModelForProvider } from '../../../../config.js'
 
 // HUB_API_KEY should be available from the root .env file loaded by config.js
 const HUB_API_KEY = process.env.HUB_API_KEY?.trim() ?? ''

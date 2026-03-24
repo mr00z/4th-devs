@@ -7,7 +7,7 @@ import {
     AI_API_KEY,
     EXTRA_API_HEADERS,
     RESPONSES_API_ENDPOINT
-} from "../../../config.js";
+} from "../../../../config.js";
 import { extractResponseText } from "./helpers/response.js";
 import { recordUsage } from "./helpers/stats.js";
 import { withRetry, enforceMinDelay, defaultRateLimitConfig } from "./helpers/rateLimiter.js";

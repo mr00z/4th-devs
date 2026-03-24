@@ -1,4 +1,4 @@
-import { resolveModelForProvider } from "../../../config.js";
+import { resolveModelForProvider } from "../../../../config.js";
 
 export const api = {
   model: resolveModelForProvider("gpt-5"),
