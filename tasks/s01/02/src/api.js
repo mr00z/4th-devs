@@ -1,4 +1,4 @@
-import { AI_API_KEY, EXTRA_API_HEADERS, RESPONSES_API_ENDPOINT } from "../../../config.js";
+import { AI_API_KEY, EXTRA_API_HEADERS, RESPONSES_API_ENDPOINT } from "../../../../config.js";
 import { schema } from "./schema.js";
 
 export const chat = async ({ model, input, tools, toolChoice = "auto", instructions }) => {

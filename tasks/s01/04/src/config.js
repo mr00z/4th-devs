@@ -1,4 +1,4 @@
-import { resolveModelForProvider } from "../../../config.js";
+import { resolveModelForProvider } from "../../../../config.js";
 
 /**
  * Rate limiting configuration
