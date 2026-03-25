@@ -12,7 +12,7 @@ Folders prefixed with numbers in the root directory contain runnable code exampl
 - `02_XX_*` - Season 2 examples (Lessons 6-10)
 - `03_XX_*` - Season 3 examples (Lessons 11-12)
 
-Each example folder contains its own `package.json` with dependencies and scripts. Install dependencies for a lesson before running examples.
+Each example folder contains its own `package.json` with dependencies and scripts.
 
 ### Lessons (`lessons/`)
 
@@ -49,7 +49,7 @@ tasks/
     └── 01/  # Task for Lesson s03e01
 ```
 
-Each task folder is a self-contained project with its own `package.json`.
+Each task folder is a self-contained project with its own `package.json`. They all are CTF (Capture The Flag) challenges.
 
 ## Environment Configuration
 
@@ -81,16 +81,28 @@ A single `.env` file in the repository root provides configuration for all tasks
 | S02 | 6-10 | Agentic RAG, chunking, embeddings, graph agents, multi-agent systems |
 | S03 | 11-12 | Observability, evaluations, code execution, email agents, event architectures |
 
+## Dictionary
+
+- **flag** - The flag is the solution to the task. It is a string that the user needs to find. Its format is `{FLG:...}` where `...` is the actual flag value. 
+
+- **verify endpoint** - The verify endpoint is the endpoint that the user needs to call to get the flag. Its URL can be found in `.env` file.
+
+
 ## Notes for AI Assistants
 
 1. **Dependencies**: Check if dependencies are installed before running examples. Each numbered folder has its own `node_modules`.
 
 2. **Environment**: Always reference the root `.env` file. Task folders do not have separate environment files.
 
-3. **Code Style**: Examples use ES modules (`import/export`). The codebase targets Node.js 24+.
+3. **Code Style**: Examples use ES modules (`import/export`). The codebase targets Node.js 24+. Prefer TypeScript over JavaScript.
 
 4. **MCP Servers**: The `mcp/` directory contains MCP server implementations used across examples.
 
 5. **Config**: The shared `config.js` exports model configurations, provider settings, and common utilities used by examples and tasks.
 
-6. **Task Structure**: Each task folder should be treated as an independent project with its own `package.json` and `node_modules`. There is no need for readme files in task folders.
+6. **Task Structure**: Each task folder should be treated as an independent project with its own `package.json` and `node_modules`. There is no need for readme files in task folders. Follow the structure of the existing tasks. 
+
+7. **Flags**: Always print the flag in the console when the task is completed. 
+
+8. **Logs**: Always add logs to the console to show the progress of the task and save the logs in a file.
+
