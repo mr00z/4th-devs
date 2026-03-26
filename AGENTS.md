@@ -22,7 +22,7 @@ Lesson transcriptions in Markdown format, organized by season:
 lessons/
 ├── s01/  # Season 1: Lessons 1-5
 ├── s02/  # Season 2: Lessons 6-10
-└── s03/  # Season 3: Lessons 11-12
+└── s03/  # Season 3: Lessons 11-14
 ```
 
 File naming convention: `s{season}e{episode}-{title}-{id}.md`
@@ -46,7 +46,10 @@ tasks/
 │   ├── 04/  # Task for Lesson s02e04
 │   └── 05/  # Task for Lesson s02e05
 └── s03/
-    └── 01/  # Task for Lesson s03e01
+    ├── 01/  # Task for Lesson s03e01
+    ├── 02/  # Task for Lesson s03e02
+    ├── 03/  # Task for Lesson s03e03
+    └── 04/  # Task for Lesson s03e04
 ```
 
 Each task folder is a self-contained project with its own `package.json`. They all are CTF (Capture The Flag) challenges.
@@ -79,7 +82,7 @@ A single `.env` file in the repository root provides configuration for all tasks
 |--------|---------|--------|
 | S01 | 1-5 | Model interaction, structured output, tools, MCP, multimodal, agent architecture |
 | S02 | 6-10 | Agentic RAG, chunking, embeddings, graph agents, multi-agent systems |
-| S03 | 11-12 | Observability, evaluations, code execution, email agents, event architectures |
+| S03 | 11-14 | Observability and evaluation, model limitations, contextual feedback, test-based tool building |
 
 ## Dictionary
 
