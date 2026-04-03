@@ -24,7 +24,6 @@ export interface RunResponsesToolLoopParams {
   instructions: string
   tools?: OpenAI.Responses.Tool[]
   initialInput: string | OpenAI.Responses.ResponseInput
-  previousResponseId?: string
   maxTurns: number
   reasoning?: OpenAI.Reasoning | null
   parallelToolCalls?: boolean
@@ -32,7 +31,6 @@ export interface RunResponsesToolLoopParams {
   onTurnStart?: (context: {
     turn: number
     inputItems: number
-    hasPreviousResponseId: boolean
   }) => void
   executeTool: (call: OpenAI.Responses.ResponseFunctionToolCall) => Promise<string>
 }
@@ -41,7 +39,6 @@ export interface RunResponsesToolLoopResult {
   text: string
   usedTool: boolean
   fromModel: boolean
-  lastResponseId?: string
 }
 
 const extractFunctionCalls = (
@@ -54,16 +51,15 @@ const extractFunctionCalls = (
 export const runResponsesToolLoop = async (
   params: RunResponsesToolLoopParams,
 ): Promise<RunResponsesToolLoopResult> => {
-  let previousResponseId = params.previousResponseId
-  let pendingInput = params.initialInput
+  const input: OpenAI.Responses.ResponseInput = Array.isArray(params.initialInput)
+    ? [...params.initialInput]
+    : [{ role: 'user', content: params.initialInput }]
   let usedTool = false
 
   for (let turn = 0; turn < params.maxTurns; turn += 1) {
-    const inputItems = Array.isArray(pendingInput) ? pendingInput.length : 1
     params.onTurnStart?.({
       turn: turn + 1,
-      inputItems,
-      hasPreviousResponseId: Boolean(previousResponseId),
+      inputItems: input.length,
     })
 
     const tag = params.traceLabel ?? 'loop'
@@ -71,21 +67,17 @@ export const runResponsesToolLoop = async (
     await appendTrace(`${tag}.request`, {
       turn: turn + 1,
       model: params.model,
-      previousResponseId,
-      input: pendingInput,
+      input,
     })
 
     const response = await openai.responses.create({
       model: params.model,
       instructions: params.instructions,
-      previous_response_id: previousResponseId,
-      input: pendingInput,
+      input,
       tools: params.tools && params.tools.length > 0 ? params.tools : undefined,
       reasoning: params.reasoning,
       parallel_tool_calls: params.parallelToolCalls,
     })
-
-    previousResponseId = response.id
 
     await appendTrace(`${tag}.response`, {
       turn: turn + 1,
@@ -105,29 +97,23 @@ export const runResponsesToolLoop = async (
     })
 
     if (response.error) {
-      return {
-        text: response.error.message,
-        usedTool,
-        fromModel: false,
-        lastResponseId: previousResponseId,
-      }
+      return { text: response.error.message, usedTool, fromModel: false }
     }
 
     const calls = extractFunctionCalls(response)
     if (calls.length === 0) {
-      return {
-        text: response.output_text ?? '',
-        usedTool,
-        fromModel: true,
-        lastResponseId: previousResponseId,
-      }
+      return { text: response.output_text ?? '', usedTool, fromModel: true }
     }
 
     usedTool = true
-    const toolOutputs: OpenAI.Responses.ResponseInput = []
+
+    for (const item of response.output) {
+      input.push(item as OpenAI.Responses.ResponseInputItem)
+    }
+
     for (const call of calls) {
       const output = await params.executeTool(call)
-      toolOutputs.push({
+      input.push({
         type: 'function_call_output',
         call_id: call.call_id,
         output,
@@ -141,23 +127,7 @@ export const runResponsesToolLoop = async (
         outputPreview: output.slice(0, 500),
       })
     }
-
-    if (toolOutputs.length === 0) {
-      return {
-        text: 'No response from model.',
-        usedTool,
-        fromModel: false,
-        lastResponseId: previousResponseId,
-      }
-    }
-
-    pendingInput = toolOutputs
   }
 
-  return {
-    text: 'Reached maximum turns.',
-    usedTool,
-    fromModel: false,
-    lastResponseId: previousResponseId,
-  }
+  return { text: 'Reached maximum turns.', usedTool, fromModel: false }
 }

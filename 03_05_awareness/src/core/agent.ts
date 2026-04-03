@@ -1,4 +1,3 @@
-import type OpenAI from 'openai'
 import { ENV } from '../config.js'
 import { logger } from '../logger.js'
 import type { McpManager } from '../mcp/client.js'
@@ -46,9 +45,6 @@ export const runAwarenessTurn = async (
 
   const wrappedUserMessage = `${buildTemporalMetadata()}\n\n${userMessage}`
   const userInput: Message = { role: 'user', content: wrappedUserMessage }
-  const initialInput: string | OpenAI.Responses.ResponseInput = session.lastResponseId
-    ? [userInput]
-    : [...session.messages, userInput]
 
   session.messages.push(userInput)
   session.turns += 1
@@ -57,19 +53,17 @@ export const runAwarenessTurn = async (
     model: template.model,
     instructions: template.systemPrompt,
     tools: selectedTools,
-    initialInput,
-    previousResponseId: session.lastResponseId,
+    initialInput: [...session.messages],
     maxTurns: ENV.maxTurns,
     reasoning: { effort: 'high' },
     parallelToolCalls: true,
     traceLabel: 'agent',
-    onTurnStart: ({ turn, inputItems, hasPreviousResponseId }) => {
-      logger.debug('agent.turn', { turn, inputItems, hasPreviousResponseId })
+    onTurnStart: ({ turn, inputItems }) => {
+      logger.debug('agent.turn', { turn, inputItems })
     },
     executeTool: (call) => executeTool(call, userMessage, mcp, session),
   })
 
-  session.lastResponseId = loopResult.lastResponseId
   if (loopResult.fromModel && loopResult.text.trim().length > 0) {
     session.messages.push({ role: 'assistant', content: loopResult.text, phase: 'final_answer' })
   }
