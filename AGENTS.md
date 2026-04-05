@@ -107,5 +107,5 @@ A single `.env` file in the repository root provides configuration for all tasks
 
 7. **Flags**: Always print the flag in the console when the task is completed. 
 
-8. **Logs**: Always add logs to the console to show the progress of the task and save the logs in a file.
+8. **Logs**: Always add logs to the console to show the progress of the task and save the logs in a timestamped file.
 
