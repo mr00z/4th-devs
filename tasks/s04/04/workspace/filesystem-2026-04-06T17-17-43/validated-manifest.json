@@ -1,0 +1,125 @@
+{
+  "directories": [
+    "/miasta",
+    "/osoby",
+    "/towary"
+  ],
+  "files": [
+    {
+      "path": "/miasta/brudzewo",
+      "content": "{\"ryz\":55,\"woda\":140,\"wiertarka\":5}"
+    },
+    {
+      "path": "/miasta/celbowo",
+      "content": "{\"kurczak\":40,\"woda\":125,\"mlotek\":6}"
+    },
+    {
+      "path": "/miasta/darzlubie",
+      "content": "{\"wolowina\":25,\"woda\":130,\"kilof\":7}"
+    },
+    {
+      "path": "/miasta/domatowo",
+      "content": "{\"makaron\":60,\"woda\":150,\"lopata\":8}"
+    },
+    {
+      "path": "/miasta/karlinkowo",
+      "content": "{\"makaron\":52,\"wolowina\":22,\"ziemniak\":95,\"woda\":155,\"kilof\":6}"
+    },
+    {
+      "path": "/miasta/mechowo",
+      "content": "{\"ziemniak\":100,\"kapusta\":70,\"marchew\":65,\"woda\":165,\"lopata\":9}"
+    },
+    {
+      "path": "/miasta/opalino",
+      "content": "{\"chleb\":45,\"woda\":120,\"mlotek\":6}"
+    },
+    {
+      "path": "/miasta/puck",
+      "content": "{\"chleb\":50,\"ryz\":45,\"woda\":175,\"wiertarka\":7}"
+    },
+    {
+      "path": "/osoby/damian_kroll",
+      "content": "Damian Kroll\nMiasto: [puck](/miasta/puck)"
+    },
+    {
+      "path": "/osoby/eliza_redmann",
+      "content": "Eliza Redmann\nMiasto: [mechowo](/miasta/mechowo)"
+    },
+    {
+      "path": "/osoby/iga_kapecka",
+      "content": "Iga Kapecka\nMiasto: [opalino](/miasta/opalino)"
+    },
+    {
+      "path": "/osoby/lena_konkel",
+      "content": "Lena Konkel\nMiasto: [karlinkowo](/miasta/karlinkowo)"
+    },
+    {
+      "path": "/osoby/marta_frantz",
+      "content": "Marta Frantz\nMiasto: [darzlubie](/miasta/darzlubie)"
+    },
+    {
+      "path": "/osoby/natan_rams",
+      "content": "Natan Rams\nMiasto: [domatowo](/miasta/domatowo)"
+    },
+    {
+      "path": "/osoby/oskar_radtke",
+      "content": "Oskar Radtke\nMiasto: [celbowo](/miasta/celbowo)"
+    },
+    {
+      "path": "/osoby/rafal_kisiel",
+      "content": "Rafal Kisiel\nMiasto: [brudzewo](/miasta/brudzewo)"
+    },
+    {
+      "path": "/towary/chleb",
+      "content": "Sprzedawcy:\n- [brudzewo](/miasta/brudzewo)\n- [celbowo](/miasta/celbowo)\n- [domatowo](/miasta/domatowo)"
+    },
+    {
+      "path": "/towary/kapusta",
+      "content": "Sprzedawcy:\n- [celbowo](/miasta/celbowo)"
+    },
+    {
+      "path": "/towary/kilof",
+      "content": "Sprzedawcy:\n- [celbowo](/miasta/celbowo)\n- [mechowo](/miasta/mechowo)\n- [puck](/miasta/puck)"
+    },
+    {
+      "path": "/towary/kurczak",
+      "content": "Sprzedawcy:\n- [darzlubie](/miasta/darzlubie)"
+    },
+    {
+      "path": "/towary/lopata",
+      "content": "Sprzedawcy:\n- [brudzewo](/miasta/brudzewo)\n- [puck](/miasta/puck)"
+    },
+    {
+      "path": "/towary/maka",
+      "content": "Sprzedawcy:\n- [brudzewo](/miasta/brudzewo)\n- [mechowo](/miasta/mechowo)"
+    },
+    {
+      "path": "/towary/makaron",
+      "content": "Sprzedawcy:\n- [opalino](/miasta/opalino)"
+    },
+    {
+      "path": "/towary/marchew",
+      "content": "Sprzedawcy:\n- [puck](/miasta/puck)"
+    },
+    {
+      "path": "/towary/mlotek",
+      "content": "Sprzedawcy:\n- [karlinkowo](/miasta/karlinkowo)\n- [mechowo](/miasta/mechowo)"
+    },
+    {
+      "path": "/towary/ryz",
+      "content": "Sprzedawcy:\n- [darzlubie](/miasta/darzlubie)\n- [karlinkowo](/miasta/karlinkowo)\n- [opalino](/miasta/opalino)"
+    },
+    {
+      "path": "/towary/wiertarka",
+      "content": "Sprzedawcy:\n- [domatowo](/miasta/domatowo)\n- [karlinkowo](/miasta/karlinkowo)"
+    },
+    {
+      "path": "/towary/wolowina",
+      "content": "Sprzedawcy:\n- [opalino](/miasta/opalino)"
+    },
+    {
+      "path": "/towary/ziemniak",
+      "content": "Sprzedawcy:\n- [darzlubie](/miasta/darzlubie)\n- [domatowo](/miasta/domatowo)"
+    }
+  ]
+}

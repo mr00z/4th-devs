@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "files": {
+      "command": "node",
+      "args": ["--import", "tsx", "../../../mcp/files-mcp/src/index.ts"],
+      "cwd": ".",
+      "env": {
+        "FS_ROOT": "c:\\Users\\mrozm\\Documents\\4th-devs\\tasks\\s04\\04"
+      }
+    }
+  }
+}
