@@ -121,3 +121,5 @@ A single `.env` file in the repository root provides configuration for all tasks
 
 9. **README.md**: Don't add readme files to task folders.
 
+10. **Testing**: There is no need for extensive testing. The focus is on the functionality of the code.
+
