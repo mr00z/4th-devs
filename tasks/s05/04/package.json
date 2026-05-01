@@ -1,0 +1,18 @@
+{
+  "name": "s05-04-goingthere-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "tsx watch src/main.ts",
+    "build": "node --import tsx -e \"await import('./src/agent.ts'); await import('./src/llm.ts'); await import('./src/api/client.ts')\"",
+    "test": "node --import tsx src/tests/run.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
